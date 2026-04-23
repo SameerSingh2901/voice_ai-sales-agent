@@ -1,0 +1,224 @@
+[
+  {
+    "id": "prop_001",
+    "title": "Sunny 2BHK in Bandra West",
+    "city": "mumbai",
+    "address": "Linking Road, Bandra West, Mumbai, Maharashtra 400050",
+    "price": 8500000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "area_sqft": 950,
+    "property_type": "apartment",
+    "description": "Well-ventilated apartment near Bandra station with partial sea view. Modern kitchen, 24/7 security, and covered parking included."
+  },
+  {
+    "id": "prop_002",
+    "title": "Luxury 3BHK Sea-View Flat in Worli",
+    "city": "mumbai",
+    "address": "Worli Sea Face, Mumbai, Maharashtra 400018",
+    "price": 32000000,
+    "bedrooms": 3,
+    "bathrooms": 3,
+    "area_sqft": 1850,
+    "property_type": "apartment",
+    "description": "High-floor apartment in a premium tower with panoramic Arabian Sea views. Includes gym, rooftop pool, and concierge service."
+  },
+  {
+    "id": "prop_003",
+    "title": "Spacious 3BHK Villa in Whitefield",
+    "city": "bangalore",
+    "address": "ITPL Main Road, Whitefield, Bangalore, Karnataka 560066",
+    "price": 15000000,
+    "bedrooms": 3,
+    "bathrooms": 3,
+    "area_sqft": 2100,
+    "property_type": "villa",
+    "description": "Gated community villa with a private garden, modular kitchen, and two-car garage. Walking distance to ITPL tech park."
+  },
+  {
+    "id": "prop_004",
+    "title": "Affordable 2BHK Apartment in Electronic City",
+    "city": "bangalore",
+    "address": "Phase 1, Electronic City, Bangalore, Karnataka 560100",
+    "price": 5200000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "area_sqft": 1050,
+    "property_type": "apartment",
+    "description": "Ready-to-move apartment in a well-maintained society. Close to Infosys and Wipro campuses. Power backup and lifts."
+  },
+  {
+    "id": "prop_005",
+    "title": "4BHK Independent Villa in Sarjapur Road",
+    "city": "bangalore",
+    "address": "Sarjapur Road, Bangalore, Karnataka 560035",
+    "price": 24000000,
+    "bedrooms": 4,
+    "bathrooms": 4,
+    "area_sqft": 3200,
+    "property_type": "villa",
+    "description": "Standalone villa on a 2400 sqft plot. Terrace garden, home theatre room, solar panels, and rainwater harvesting. Premium locality."
+  },
+  {
+    "id": "prop_006",
+    "title": "3BHK Builder Floor in South Delhi",
+    "city": "delhi",
+    "address": "Greater Kailash II, New Delhi, Delhi 110048",
+    "price": 18000000,
+    "bedrooms": 3,
+    "bathrooms": 3,
+    "area_sqft": 1700,
+    "property_type": "apartment",
+    "description": "Ground-floor builder flat in Greater Kailash II. Large living area, servant quarters, and a private courtyard. Quiet residential street."
+  },
+  {
+    "id": "prop_007",
+    "title": "Studio Apartment in Connaught Place",
+    "city": "delhi",
+    "address": "Connaught Place, New Delhi, Delhi 110001",
+    "price": 6500000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "area_sqft": 480,
+    "property_type": "apartment",
+    "description": "Compact studio ideal for working professionals. Walking distance to metro, restaurants, and business hubs. Fully furnished option available."
+  },
+  {
+    "id": "prop_008",
+    "title": "2BHK Flat in HITEC City",
+    "city": "hyderabad",
+    "address": "HITEC City, Hyderabad, Telangana 500081",
+    "price": 7800000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "area_sqft": 1120,
+    "property_type": "apartment",
+    "description": "Modern apartment in the IT corridor. Clubhouse, swimming pool, and landscaped gardens. Easy access to Microsoft and Google offices."
+  },
+  {
+    "id": "prop_009",
+    "title": "Residential Plot in Shamshabad",
+    "city": "hyderabad",
+    "address": "Shamshabad, Hyderabad, Telangana 501218",
+    "price": 4500000,
+    "bedrooms": 0,
+    "bathrooms": 0,
+    "area_sqft": 1800,
+    "property_type": "plot",
+    "description": "DTCP-approved residential plot near airport with wide roads and 24-hour security."
+  },
+
+  {
+    "id": "prop_010",
+    "title": "Modern 2BHK in Andheri East",
+    "city": "mumbai",
+    "address": "Andheri East, Mumbai, Maharashtra 400069",
+    "price": 9200000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "area_sqft": 870,
+    "property_type": "apartment",
+    "description": "Close to metro and business hubs. Ideal for professionals."
+  },
+  {
+    "id": "prop_011",
+    "title": "3BHK Apartment in Powai Lake View",
+    "city": "mumbai",
+    "address": "Powai, Mumbai, Maharashtra 400076",
+    "price": 21000000,
+    "bedrooms": 3,
+    "bathrooms": 3,
+    "area_sqft": 1450,
+    "property_type": "apartment",
+    "description": "Lake-facing apartment with premium amenities and security."
+  },
+  {
+    "id": "prop_012",
+    "title": "Luxury Villa in Juhu",
+    "city": "mumbai",
+    "address": "Juhu Scheme, Mumbai, Maharashtra 400049",
+    "price": 55000000,
+    "bedrooms": 5,
+    "bathrooms": 5,
+    "area_sqft": 5000,
+    "property_type": "villa",
+    "description": "Ultra-luxury villa near beach with private pool."
+  },
+
+  {
+    "id": "prop_013",
+    "title": "2BHK Flat in Indiranagar",
+    "city": "bangalore",
+    "address": "Indiranagar, Bangalore, Karnataka 560038",
+    "price": 8800000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "area_sqft": 1000,
+    "property_type": "apartment",
+    "description": "Prime location with cafes and metro nearby."
+  },
+  {
+    "id": "prop_014",
+    "title": "3BHK Flat in Koramangala",
+    "city": "bangalore",
+    "address": "Koramangala 5th Block, Bangalore, Karnataka 560095",
+    "price": 13500000,
+    "bedrooms": 3,
+    "bathrooms": 3,
+    "area_sqft": 1600,
+    "property_type": "apartment",
+    "description": "Spacious flat in startup hub area."
+  },
+
+  {
+    "id": "prop_015",
+    "title": "Luxury Penthouse in Gurgaon",
+    "city": "delhi",
+    "address": "DLF Phase 5, Gurgaon, Haryana 122009",
+    "price": 40000000,
+    "bedrooms": 4,
+    "bathrooms": 4,
+    "area_sqft": 3500,
+    "property_type": "apartment",
+    "description": "Penthouse with terrace and skyline view."
+  },
+  {
+    "id": "prop_016",
+    "title": "2BHK Flat in Dwarka",
+    "city": "delhi",
+    "address": "Dwarka Sector 12, New Delhi, Delhi 110078",
+    "price": 7500000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "area_sqft": 900,
+    "property_type": "apartment",
+    "description": "Affordable housing with metro connectivity."
+  },
+
+  {
+    "id": "prop_017",
+    "title": "3BHK Flat in Gachibowli",
+    "city": "hyderabad",
+    "address": "Gachibowli, Hyderabad, Telangana 500032",
+    "price": 9800000,
+    "bedrooms": 3,
+    "bathrooms": 3,
+    "area_sqft": 1400,
+    "property_type": "apartment",
+    "description": "Close to IT parks and financial district."
+  },
+
+  {
+    "id": "prop_018",
+    "title": "Independent House in Jaipur",
+    "city": "jaipur",
+    "address": "Vaishali Nagar, Jaipur, Rajasthan 302021",
+    "price": 7000000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "area_sqft": 1800,
+    "property_type": "house",
+    "description": "Peaceful residential neighborhood."
+  }
+
+]
