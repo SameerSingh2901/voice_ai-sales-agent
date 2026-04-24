@@ -1,6 +1,8 @@
-# Priya — AI Voice Property Consultant
+# Voice AI Agent Framework
 
-> A real-time voice AI agent that helps users find properties across India through natural conversation. Speak naturally, Priya listens, searches semantically, and talks back — all in real time.
+> A provider-agnostic, real-time voice AI agent framework built for adaptability. Swap a prompt file, a tool, and a settings file — and the same pipeline becomes a property consultant, a book sales agent, a customer support bot, or anything else.
+
+**Currently demoed as:** Priya, an AI property consultant for Indian real estate.
 
 ---
 
@@ -8,25 +10,26 @@
 
 > 🎥 *Demo video coming soon*
 
-> 💼 Running locally because cloud costs money and I'm actively looking for a job. **Hire me and we'll put this in production together.**
+> 💼 Running locally because cloud costs money and I'm actively looking for a job. **Hire me and we'll deploy this together.**
 
 ---
 
-## What Priya Does
+## The Core Idea
 
-Priya is a voice-first property consultant for Indian real estate. Here's the full loop of a single conversation turn:
+Most voice AI projects are built for one specific use case — tightly coupled to their domain, their data, and their persona. This project is built differently.
 
-1. User speaks into the browser mic
-2. **Deepgram STT** (`nova-2`) transcribes the audio in real time
-3. **Silero VAD** detects end-of-speech so Priya knows when to respond
-4. The **LLM** (Ollama / OpenAI — swappable via config) reasons over the conversation
-5. Once the user provides city + property type, the LLM calls `property_search`
-6. `property_search` runs a **semantic vector search on Pinecone**, filtered by city, type, bedrooms, and price range
-7. The LLM summarises the top matches naturally — names, prices in lakhs/crores, key features
-8. **Deepgram TTS** (`aura-asteria-en`) speaks the response back to the user
-9. Priya waits for the next turn
+The framework separates **infrastructure** from **behaviour**:
 
-Priya introduces herself the moment the session starts — the user doesn't need to say anything first.
+- The **pipeline** (`agent.py`, `pipeline.py`) handles all the real-time audio, STT, LLM, TTS, and VAD wiring. It never changes between use cases.
+- The **behaviour** is fully defined by three files you swap out per deployment:
+
+| File | What it controls |
+|---|---|
+| `app/config/settings.py` | Which STT, LLM, TTS, VAD providers to use and which models |
+| `app/config/system_prompt.yaml` | Agent persona, conversation rules, tool-calling discipline |
+| `app/tools/your_tool.py` | The domain-specific action the agent can take |
+
+**To go from a property consultant to a book sales agent:** change the prompt, replace `property_tool.py` with `book_tool.py`, update the data in Pinecone, and you're done. The entire audio pipeline, provider switching, and RAG infrastructure stays identical.
 
 ---
 
@@ -46,24 +49,29 @@ Priya introduces herself the moment the session starts — the user doesn't need
                          │
                          ▼
 ┌──────────────────────────────────────────────────────────────┐
-│                  Priya Agent  (Python)                       │
+│              Voice AI Agent Framework  (Python)              │
 │                                                              │
+│  ── INFRASTRUCTURE (never changes) ──────────────────────── │
 │  ┌───────────────┐  ┌──────────┐  ┌────────────────────┐   │
-│  │ Deepgram STT  │─▶│  Silero  │─▶│        LLM         │   │
-│  │   nova-2      │  │   VAD    │  │  Ollama / OpenAI   │   │
+│  │  STT Plugin   │─▶│  Silero  │─▶│    LLM Plugin      │   │
+│  │  (pluggable)  │  │   VAD    │  │    (pluggable)      │   │
 │  └───────────────┘  └──────────┘  └────────┬───────────┘   │
 │                                             │ tool call      │
+│  ── BEHAVIOUR (swap per deployment) ──────  │               │
 │                                             ▼               │
-│                                  ┌──────────────────┐       │
-│                                  │ property_search   │       │
-│                                  └────────┬─────────┘       │
-│                                           │                 │
-│  ┌───────────────┐                        ▼                 │
-│  │ Deepgram TTS  │◀──────────── ┌──────────────────┐        │
-│  │aura-asteria-en│   response   │    Pinecone       │        │
-│  └───────────────┘              │ (semantic search  │        │
-│                                 │  + meta filters)  │        │
-│                                 └──────────────────┘        │
+│  ┌───────────────┐              ┌──────────────────┐        │
+│  │  TTS Plugin   │◀─ response ──│   Your Tool      │        │
+│  │  (pluggable)  │              │ (property/book/  │        │
+│  └───────────────┘              │  support/etc.)   │        │
+│                                 └────────┬─────────┘        │
+│  ┌─────────────────────────────┐         │                  │
+│  │  system_prompt.yaml         │         ▼                  │
+│  │  (persona + rules)          │  ┌──────────────────┐      │
+│  └─────────────────────────────┘  │  Pinecone / Any  │      │
+│  ┌─────────────────────────────┐  │  Data Source     │      │
+│  │  settings.py                │  └──────────────────┘      │
+│  │  (provider config)          │                            │
+│  └─────────────────────────────┘                            │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -74,13 +82,13 @@ Priya introduces herself the moment the session starts — the user doesn't need
 | Layer | Technology | Details |
 |---|---|---|
 | Real-time transport | [LiveKit](https://livekit.io) | WebRTC room, audio streaming, agent worker |
-| Speech-to-text | [Deepgram](https://deepgram.com) | `nova-2` model, real-time transcription |
+| Speech-to-text | [Deepgram](https://deepgram.com) | `nova-2` model — swappable with OpenAI Whisper |
 | Voice activity detection | [Silero VAD](https://github.com/snakers4/silero-vad) | Detects end-of-speech |
-| LLM | Ollama / OpenAI | Configurable — see `settings.py` |
-| Embeddings | Ollama (`nomic-embed-text`) | 768-dim embeddings for property ingestion |
-| Text-to-speech | [Deepgram](https://deepgram.com) | `aura-asteria-en` voice |
-| Vector database | [Pinecone](https://pinecone.io) | Semantic search + metadata filtering |
-| Agent framework | [LiveKit Agents](https://docs.livekit.io/agents/) | Pipeline orchestration, tool use, sessions |
+| LLM | Ollama / OpenAI | Fully swappable via `settings.py` — no code changes |
+| Embeddings | Ollama (`nomic-embed-text`) | 768-dim, runs fully locally |
+| Text-to-speech | [Deepgram](https://deepgram.com) | `aura-asteria-en` — swappable with ElevenLabs, OpenAI, Cartesia |
+| Vector database | [Pinecone](https://pinecone.io) | Semantic search + metadata filtering for any dataset |
+| Agent framework | [LiveKit Agents](https://docs.livekit.io/agents/) | Pipeline orchestration, tool use, session management |
 
 ---
 
@@ -89,28 +97,71 @@ Priya introduces herself the moment the session starts — the user doesn't need
 ```
 .
 ├── agent.py                        # Entry point — defines the Assistant and starts the LiveKit worker
-├── pipeline.py                     # Builds STT, LLM, TTS, VAD instances from config
+├── pipeline.py                     # Core infrastructure — builds STT, LLM, TTS, VAD from config
 │
 ├── app/
 │   ├── config/
-│   │   ├── settings.py             # All provider choices live here — swap providers without touching agent code
-│   │   └── system_prompt.yaml      # Priya's system prompt — personality, rules, tool instructions
+│   │   ├── settings.py             # ← SWAP THIS: all provider and model choices per deployment
+│   │   └── system_prompt.yaml      # ← SWAP THIS: agent persona, rules, and tool-calling behaviour
 │   │
 │   ├── tools/
-│   │   └── property_tool.py        # property_search tool — called by the LLM, queries Pinecone
+│   │   └── property_tool.py        # ← SWAP THIS: the domain-specific tool (current demo: property search)
 │   │
 │   └── rag/
-│       ├── ingest.py               # One-time script — embeds property data and uploads to Pinecone
-│       └── pinecone_client.py      # Pinecone client — semantic search with metadata filter logic
+│       ├── ingest.py               # One-time script — embeds your dataset and uploads to Pinecone
+│       └── pinecone_client.py      # Semantic search with metadata filters — works with any structured data
 │
 └── requirements.txt
 ```
+
+The three files marked `← SWAP THIS` are the only files you change between deployments.
+
+---
+
+## How to Adapt This to a New Use Case
+
+Here's what changing the domain actually looks like in practice.
+
+**Example: property consultant → book sales agent**
+
+**1. Replace the tool** (`app/tools/book_tool.py`):
+```python
+@function_tool
+async def book_search(
+    genre: str,
+    max_price: float | None = None,
+    author: str | None = None,
+) -> list[dict]:
+    return search_books(genre=genre, max_price=max_price, author=author)
+```
+
+**2. Update the prompt** (`system_prompt.yaml`):
+```yaml
+instructions: |
+  You are Nova, a friendly book sales assistant.
+  Collect genre and budget before searching.
+  Only call book_search when you have genre confirmed.
+  ...
+```
+
+**3. Update settings** (`settings.py`) — only if you want different providers:
+```python
+LLM_PROVIDER = "openai"   # switch to cloud if needed
+TTS_VOICE = "aura-luna-en"  # different voice for different persona
+```
+
+**4. Ingest your new dataset** into Pinecone:
+```bash
+python -m app.rag.ingest  # point it at your books dataset
+```
+
+The audio pipeline, LiveKit integration, provider switching, and RAG infrastructure — all unchanged.
 
 ---
 
 ## Configuration
 
-All provider choices live in `app/config/settings.py`. No code changes needed to swap models — just edit this file.
+All provider choices live in `app/config/settings.py`:
 
 ```python
 # STT — Options: "deepgram" | "openai"
@@ -149,8 +200,6 @@ PROMPT_FILE = "app/config/system_prompt.yaml"
 
 ## Environment Variables
 
-Create a `.env` file in the project root:
-
 ```env
 DEEPGRAM_API_KEY=your_deepgram_key
 
@@ -161,7 +210,7 @@ LIVEKIT_API_SECRET=your_livekit_api_secret
 PINECONE_API_KEY=your_pinecone_key
 ```
 
-> **Note:** No OpenAI key needed when running with Ollama. The LLM and embeddings both run fully locally.
+> **Note:** No OpenAI key needed when running with Ollama. LLM and embeddings both run fully locally.
 
 ---
 
@@ -176,22 +225,18 @@ PINECONE_API_KEY=your_pinecone_key
 - A [Deepgram](https://deepgram.com) account (free tier works)
 - A [Pinecone](https://pinecone.io) account with an index created
 
----
-
 ### Step 1 — Pull Ollama models
 
 ```bash
 ollama pull qwen2.5:7b        # LLM
-ollama pull nomic-embed-text  # Embeddings (needed for ingest step)
+ollama pull nomic-embed-text  # Embeddings (for ingest)
 ```
-
----
 
 ### Step 2 — Clone and install
 
 ```bash
-git clone https://github.com/SameerSingh2901/voice_ai-sales-agent.git   # replace with your repo URL
-cd priya-agent
+git clone https://github.com/SameerSingh2901/voice_ai-sales-agent.git
+cd voice_ai-sales-agent
 
 python -m venv venv
 source venv/bin/activate      # Windows: venv\Scripts\activate
@@ -199,28 +244,20 @@ source venv/bin/activate      # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
----
-
 ### Step 3 — Configure
 
 ```bash
 cp .env.example .env
-# Fill in your keys — see Environment Variables section above
+# Fill in your keys
 ```
 
-Edit `app/config/settings.py` to set your preferred providers and models.
+Edit `app/config/settings.py` to choose your providers and models.
 
----
-
-### Step 4 — Ingest property data into Pinecone
-
-One-time setup. Embeds the property dataset and uploads it to Pinecone.
+### Step 4 — Ingest your dataset into Pinecone
 
 ```bash
 python -m app.rag.ingest
 ```
-
----
 
 ### Step 5 — Authenticate with LiveKit CLI
 
@@ -228,85 +265,64 @@ python -m app.rag.ingest
 lk cloud auth
 ```
 
-Opens your browser to authenticate with LiveKit Cloud. Only needed once.
-
----
-
 ### Step 6 — Start the agent
 
 ```bash
 python -m agent start
 ```
 
----
-
 ### Step 7 — Test via LiveKit Playground
 
-Go to [agents-playground.livekit.io](https://agents-playground.livekit.io), connect to your LiveKit project, enable your mic, and start talking. Priya will introduce herself immediately without any prompt from you.
+Go to [agents-playground.livekit.io](https://agents-playground.livekit.io), connect to your LiveKit project, enable your mic, and start talking. The agent introduces itself immediately.
 
 ---
 
-## How the RAG Pipeline Works
+## Demo Use Case — Priya, Property Consultant
 
-### Ingestion (`ingest.py`) — run once
+The current deployment demonstrates the framework as **Priya**, an AI property consultant for Indian real estate.
 
-- Property listings are loaded from a local JSON dataset
-- Each listing is converted to a descriptive text string
-- The text is embedded using `nomic-embed-text` via Ollama (768 dimensions)
-- Vectors are uploaded to Pinecone with full metadata attached
-
-### Retrieval (`pinecone_client.py`) — runs on every search
-
-When the LLM calls `property_search`, the tool queries Pinecone with both a semantic vector search and optional metadata filters:
-
-| Filter | Match type | Example value |
-|---|---|---|
-| `city` | Exact | `"mumbai"` |
-| `property_type` | Exact | `"apartment"` |
-| `bedrooms` | Exact | `2` |
-| `min_price` / `max_price` | Range | `5000000` – `15000000` |
-
-Filters are combined — so "affordable 2BHK apartment in Pune" translates to a semantic query with city, type, bedroom, and price filters all applied together. Results are ranked by vector similarity score.
-
----
-
-## The Property Dataset
-
-Priya searches a demo dataset of Indian property listings. Each listing has the following fields:
+**Dataset:** A curated set of Indian property listings with the following fields:
 
 | Field | Type | Example |
 |---|---|---|
 | `id` | string | `prop_001` |
 | `title` | string | `Sunny 2BHK in Bandra West` |
 | `city` | string | `mumbai` |
-| `address` | string | `Linking Road, Bandra West, Mumbai` |
 | `price` | integer (INR) | `8500000` |
 | `bedrooms` | integer | `2` |
-| `bathrooms` | integer | `2` |
-| `area_sqft` | integer | `950` |
 | `property_type` | string | `apartment` |
 | `description` | string | Free-text, used for semantic search |
 
+**Search filters supported:** city, property type, bedrooms, min/max price — combined with semantic vector search so natural language queries like "affordable flat near the sea in Mumbai" return relevant results.
+
+**Prompt design decisions:**
+- Agent introduces itself immediately on session start — no user prompt needed
+- LLM collects city + property type before calling the search tool, preventing bad queries
+- Unit conversion rules (lakh/crore → INR integers) baked into the prompt
+- Hard guardrails: no fabricating listings, no financial advice
+
 ---
 
-## Prompt Design
+## How the RAG Pipeline Works
 
-Priya's behaviour is fully defined in `app/config/system_prompt.yaml`. Key decisions:
+**Ingestion** (`ingest.py`) — run once per dataset:
+- Data is embedded using `nomic-embed-text` via Ollama (768 dimensions)
+- Vectors uploaded to Pinecone with full metadata attached
 
-- **Auto-introduction** — Priya speaks first using `on_enter`, no user prompt needed to start the conversation
-- **Mandatory field collection** — the LLM is explicitly instructed not to call `property_search` until it has both city AND property type, preventing empty or low-quality searches
-- **Unit conversion rules** — the prompt contains explicit conversion instructions so the LLM always passes plain INR integers to the tool (1 crore = 10,000,000 / 1 lakh = 100,000)
-- **Voice-first constraints** — responses are kept concise, no raw data or JSON is ever read aloud, natural Indian English throughout
-- **Hard guardrails** — no fabricating listings not returned by the tool, no financial advice, no going off-topic
+**Retrieval** (`pinecone_client.py`) — runs on every tool call:
+- Semantic vector search + metadata filters applied together
+- Results ranked by similarity score and returned to the LLM
+
+This works with any structured dataset — properties, books, products, FAQs, or anything else you ingest.
 
 ---
 
 ## What's Next
 
-- [ ] Real property listings via a live real estate API
+- [ ] Additional demo use cases to showcase the framework's adaptability
 - [ ] React frontend using LiveKit Agents UI components
-- [ ] Deployment on LiveKit Cloud with a proper token server
-- [ ] Hindi and regional language query support
+- [ ] Deployment on LiveKit Cloud with a token server
+- [ ] Hindi and regional language support
 
 ---
 
@@ -314,8 +330,9 @@ Priya's behaviour is fully defined in `app/config/system_prompt.yaml`. Key decis
 
 **Sameer Singh**
 
-Built this end-to-end to understand what a production-grade voice AI agent actually looks like — raw audio in, semantic search, natural speech out, all in real time. Every layer from STT to vector search to TTS is wired together and working.
+Built this to explore what a truly reusable voice AI agent architecture looks like — where the infrastructure is generic and the domain is just configuration. The goal was to build something a company could pick up, point at their data and prompt, and have a working voice agent without touching the pipeline.
 
 If you're a recruiter or hiring manager: yes, this works, yes I built all of it, and yes I'm very much open to opportunities. It's local-only because cloud hosting costs money I don't currently have — but the architecture is production-ready and I'd love to show you what it can do.
 
-[LinkedIn]((https://www.linkedin.com/in/sameersingh2901/)) · [GitHub](https://github.com/SameerSingh2901) · [Email - sameersinghwork@gmail.com](#)
+
+[LinkedIn]((https://www.linkedin.com/in/sameersingh2901/)) · [GitHub](https://github.com/SameerSingh2901) · [Email - sameersinghwork@gmail.com](mailto:sameersinghwork@gmail.com)
