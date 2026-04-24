@@ -335,4 +335,4 @@ Built this to explore what a truly reusable voice AI agent architecture looks li
 If you're a recruiter or hiring manager: yes, this works, yes I built all of it, and yes I'm very much open to opportunities. It's local-only because cloud hosting costs money I don't currently have — but the architecture is production-ready and I'd love to show you what it can do.
 
 
-[LinkedIn]((https://www.linkedin.com/in/sameersingh2901/)) · [GitHub](https://github.com/SameerSingh2901) · [Email - sameersinghwork@gmail.com](mailto:sameersinghwork@gmail.com)
+[LinkedIn](https://www.linkedin.com/in/sameersingh2901/) · [GitHub](https://github.com/SameerSingh2901) · [Email - sameersinghwork@gmail.com](mailto:sameersinghwork@gmail.com)
